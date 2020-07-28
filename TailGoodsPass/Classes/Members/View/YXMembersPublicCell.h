@@ -1,0 +1,25 @@
+//
+//  YXMembersPublicCell.h
+//  TailGoodsPass
+//
+//  Created by 杨旭 on 2017/9/7.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class YXUserInfoModel;
+@interface YXMembersPublicCell : UITableViewCell
+
+@property (nonatomic ,copy) void(^upgradeBtnClick)();
+
+@property (nonatomic ,strong) YXUserInfoModel *model;
+
+@end
+
+
+@interface YXMembersPublicCell1 : UITableViewCell
+
+@property (nonatomic ,copy) void (^buttonClicked)(NSInteger index);
+
+
+@end

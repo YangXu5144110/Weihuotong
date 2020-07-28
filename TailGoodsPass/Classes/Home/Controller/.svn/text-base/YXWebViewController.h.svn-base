@@ -1,0 +1,16 @@
+//
+//  YXWebViewController.h
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/7.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "BaseViewController.h"
+
+@interface YXWebViewController : BaseViewController
+
+@property (nonatomic, copy) NSString *url;
+
+
+@end

@@ -1,0 +1,16 @@
+//
+//  YXLevelCell.h
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/19.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+@class YXLevelListModel;
+@interface YXLevelCell : UITableViewCell
+@property (nonatomic ,strong) UIImageView *leftImage;
+@property (nonatomic ,strong) UIImageView *uplevelImage;
+@property (nonatomic ,strong) UIImageView *starImage;
+@property (nonatomic ,strong) YXLevelListModel *model;
+@end

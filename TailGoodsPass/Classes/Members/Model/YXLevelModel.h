@@ -1,0 +1,28 @@
+//
+//  YXLevelModel.h
+//  TailGoodsPass
+//
+//  Created by 杨旭 on 2017/9/22.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "BaseModel.h"
+
+@interface YXLevelModel : BaseModel
+
+@property (nonatomic ,copy) NSString *MYINTEGRAL;
+@property (nonatomic ,copy) NSString *MYLEVEL;
+@property (nonatomic ,copy) NSString *MYSCORE;
+@property (nonatomic ,strong) NSArray *LIST;
+@end
+
+
+
+@interface YXLevelListModel : BaseModel
+
+@property (nonatomic ,copy) NSString *AUTONO;
+@property (nonatomic ,copy) NSString *LEVELID;
+@property (nonatomic ,copy) NSString *NEEDSCORE;
+@property (nonatomic ,copy) NSString *PARAVALUE;
+@property (nonatomic ,copy) NSString *VIPMARK;
+@end

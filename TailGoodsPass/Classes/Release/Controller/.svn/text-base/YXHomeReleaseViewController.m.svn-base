@@ -1,0 +1,208 @@
+//
+//  YXHomeReleaseViewController.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/19.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXHomeReleaseViewController.h"
+#import "YXHomeReleaseTableView.h"
+#import "YXWebViewController.h"
+#import <iflyMSC/iflyMSC.h>
+@interface YXHomeReleaseViewController ()<IFlyRecognizerViewDelegate,IFlySpeechSynthesizerDelegate>
+
+// 语音变文字
+@property (nonatomic ,strong) IFlyRecognizerView *iflyRecognizerView;
+// 文字变语音
+@property (nonatomic ,strong) IFlySpeechSynthesizer *iFlySpeechSynthesizer;
+
+@property (nonatomic ,strong) YXHomeReleaseTableView *releaseTableView;
+
+@end
+
+@implementation YXHomeReleaseViewController
+
+- (YXHomeReleaseTableView *)releaseTableView {
+    if (!_releaseTableView) {
+        _releaseTableView = [[YXHomeReleaseTableView alloc] initWithFrame:self.view.bounds style:(UITableViewStylePlain)];
+        
+        YXWeakSelf
+        [self.releaseTableView setSelectClick:^(NSInteger index){
+            switch (index) {
+                case 0:{  // 类别
+                    
+                }
+                    break;
+                case 1:{ // 处理方式
+                    
+                }
+                    break;
+                case 2:{ // 有效期
+                    
+                }
+                    break;
+                case 3:{ // 地址
+                    
+                }
+                    break;
+                case 4:{ // 录音
+                    
+                    //启动识别服务
+                    [weakSelf.iflyRecognizerView start];
+                    
+
+                }
+                    break;
+                case 5:{  // 确认发布
+                    
+                }
+                    break;
+                case 6:{  // 查看规则
+                    YXWebViewController *webVC = [[YXWebViewController alloc] init];
+                    webVC.url = @"http://www.4008000114.com:8099/Rule/onekey.html";
+                    [weakSelf.navigationController pushViewController:webVC animated:YES];
+                }
+                    break;
+                default:
+                    break;
+            }
+        }];
+    }
+    return _releaseTableView;
+}
+
+- (void)click:(UIBarButtonItem *)sender {
+    
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithTitle:@"模板管理" style:(UIBarButtonItemStylePlain) target:self action:@selector(click:)];
+    rightItem.tintColor = [UIColor whiteColor];
+    self.navigationItem.rightBarButtonItem = rightItem;
+
+    
+    [self requestDataInventoryForOneKey];
+    [self.view addSubview:self.releaseTableView];
+    
+    // 调用初始化听写
+    [self initWithSpeakToWord];
+    
+    // 调用初始化语音合成
+    [self initWithWorkToSpeak];
+
+}
+
+
+
+// 初始化语音听写
+-(void)initWithSpeakToWord {
+    //初始化语音识别控件
+    _iflyRecognizerView = [[IFlyRecognizerView alloc] initWithCenter:self.view.center];
+    // 代理方法
+    _iflyRecognizerView.delegate = self;
+    
+    [_iflyRecognizerView setParameter: @"iat" forKey: [IFlySpeechConstant IFLY_DOMAIN]];
+    //asr_audio_path保存录音文件名，如不再需要，设置value为nil表示取消，默认目录是documents
+    [_iflyRecognizerView setParameter:@"asrview.pcm " forKey:[IFlySpeechConstant ASR_AUDIO_PATH]];
+}
+
+// 初始化语音合成
+-(void)initWithWorkToSpeak {
+    
+    // 创建合成对象，为单例模式
+    _iFlySpeechSynthesizer = [IFlySpeechSynthesizer sharedInstance]; _iFlySpeechSynthesizer.delegate = self;
+    //设置语音合成的参数
+    //语速,取值范围 0~100
+    [_iFlySpeechSynthesizer setParameter:@"50" forKey:[IFlySpeechConstant SPEED]];
+    //音量;取值范围 0~100
+    [_iFlySpeechSynthesizer setParameter:@"50" forKey: [IFlySpeechConstant VOLUME]];
+    //发音人,默认为”xiaoyan”;可以设置的参数列表可参考个 性化发音人列表
+    [_iFlySpeechSynthesizer setParameter:@"  vixq  " forKey: [IFlySpeechConstant VOICE_NAME]];
+    //音频采样率,目前支持的采样率有 16000 和 8000
+    [_iFlySpeechSynthesizer setParameter:@"8000" forKey: [IFlySpeechConstant SAMPLE_RATE]];
+    //asr_audio_path保存录音文件路径，如不再需要，设置value为nil表示取消，默认目录是documents
+    [_iFlySpeechSynthesizer setParameter:@" tts.pcm" forKey: [IFlySpeechConstant TTS_AUDIO_PATH]];
+    
+    
+}
+
+/*识别结果返回代理
+ @param resultArray 识别结果
+ @ param isLast 表示是否最后一次结果
+ */
+- (void)onResult: (NSArray *)resultArray isLast:(BOOL) isLast
+{
+    
+     NSLog(@"结果%@",resultArray);
+    
+    NSDictionary *dic = resultArray[0];
+    // NSLog(@"结果%@",dic);
+    NSString *str1 = [dic allKeys][0];
+    // 字符串变字典
+    // 1.字符串变data
+    NSData *tempDate = [str1 dataUsingEncoding:NSUTF8StringEncoding];
+    
+    // 2.data变字典
+    NSDictionary *tempDic = [NSJSONSerialization JSONObjectWithData:tempDate options:NSJSONReadingAllowFragments error:nil];
+    NSLog(@"%@",tempDic);
+    
+    // 遍历
+    NSArray *tempArr = [tempDic objectForKey:@"ws"];
+    
+    for (NSDictionary *tempDic1 in tempArr) {
+        
+        NSArray *tempArr1 = [tempDic1 objectForKey:@"cw"];
+        NSDictionary *tempDic2 = tempArr1[0];
+        NSString *tempStr2  = [tempDic2 objectForKey:@"w"];
+        
+        NSLog(@"%@",tempStr2);
+    }
+    
+    
+    
+}
+/*识别会话错误返回代理
+ @ param  error 错误码
+ */
+- (void)onError: (IFlySpeechError *) error{
+    NSLog(@"error == %@",error);
+}
+
+
+//合成结束，此代理必须要实现
+- (void) onCompleted:(IFlySpeechError *) error{}
+//合成开始
+- (void) onSpeakBegin{}
+//合成缓冲进度
+- (void) onBufferProgress:(int) progress message:(NSString *)msg{}
+//合成播放进度
+- (void) onSpeakProgress:(int) progress{}
+
+
+
+
+
+#pragma mark - 请求一键发布货源
+- (void)requestDataInventoryForOneKey {
+    
+    //    http://www.4008000114.com:8099/MallSell/Inventory/InventoryForOneKey.ashx?Method=GETDEFAULT
+    NSString *urlStr = @"MallSell/Inventory/InventoryForOneKey.ashx";
+    NSDictionary *parameter = @{@"Method":@"GETDEFAULT"};
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:parameter success:^(id responseObject) {
+        if (SUCCESS) {
+            self.releaseTableView.dataDic = [responseObject objectForKey:@"DATA"];
+        }else {
+            
+        }
+        [self.releaseTableView reloadData];
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+
+@end

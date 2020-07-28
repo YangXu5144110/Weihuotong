@@ -1,0 +1,262 @@
+//
+//  YXHomeMapViewController.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/15.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXHomeMapViewController.h"
+#import <MAMapKit/MAMapKit.h>
+#import <AMapFoundationKit/AMapFoundationKit.h>
+#import "YXHomeMapCell.h"
+#import "YXMapModel.h"
+#import "YXCustomAnnotationView.h"
+@interface YXHomeMapViewController ()<MAMapViewDelegate,UITableViewDelegate,UITableViewDataSource>
+
+@property (nonatomic ,strong) MAMapView *mapView;
+@property (nonatomic ,strong) UIButton *locationBtn;
+@property (nonatomic ,strong) UIView *listView;
+@property (nonatomic ,strong) UILabel *queryLab;
+@property (nonatomic ,strong) UITableView *tableView;
+@property (nonatomic ,strong) NSMutableArray *listArr;
+@property (nonatomic ,strong) NSMutableArray *gpsxArr;
+@property (nonatomic ,strong) NSMutableArray *gpsyArr;
+@property (nonatomic ,strong) NSMutableArray *titleArr;
+@property (nonatomic ,strong) NSMutableArray *urlArr;
+@property (nonatomic ,strong) NSMutableArray *addressArr;
+@property (nonatomic ,strong) YXCustomAnnotationView *annotationView;
+@end
+
+@implementation YXHomeMapViewController
+
+- (NSMutableArray *)addressArr {
+    if (!_addressArr) {
+        _addressArr = [NSMutableArray array];
+    }
+    return _addressArr;
+}
+
+- (NSMutableArray *)urlArr {
+    if (!_urlArr) {
+        _urlArr = [NSMutableArray array];
+    }
+    return _urlArr;
+}
+
+- (NSMutableArray *)titleArr {
+    if (!_titleArr) {
+        _titleArr = [NSMutableArray array];
+    }
+    return _titleArr;
+}
+
+- (UIButton *)locationBtn {
+    if (!_locationBtn) {
+        _locationBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _locationBtn.frame = CGRectMake(10,300, 40, 40);
+        _locationBtn.backgroundColor = [UIColor whiteColor];
+        [_locationBtn setImage:[UIImage imageNamed:@"mylocation_40x40_"] forState:(UIControlStateNormal)];
+        [_locationBtn addTarget:self action:@selector(locationBtnClick:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _locationBtn;
+}
+
+- (void)locationBtnClick:(UIButton *)sender {
+    
+}
+
+- (NSMutableArray *)listArr {
+    if (!_listArr) {
+        _listArr = [NSMutableArray array];
+    }
+    return _listArr;
+}
+
+- (NSMutableArray *)gpsxArr {
+    if (!_gpsxArr) {
+        _gpsxArr = [NSMutableArray array];
+    }
+    return _gpsxArr;
+}
+- (NSMutableArray *)gpsyArr {
+    if (!_gpsyArr) {
+        _gpsyArr = [NSMutableArray array];
+    }
+    return _gpsyArr;
+}
+
+
+- (UILabel *)queryLab {
+    if (!_queryLab) {
+        _queryLab = [UILabel setLabelWithText:@"查询结果" fontSize:16 color:color_textTwo];
+        _queryLab.frame = CGRectMake(15, 0, kScreenWidth, 40);
+    }
+    return _queryLab;
+}
+
+- (UIView *)listView {
+    if (!_listView) {
+        _listView = [[UIView alloc] initWithFrame:(CGRectMake(0, _mapView.H + _mapView.Y - 64, kScreenWidth, kScreenHeight))];
+        UIView *lineView = [[UIView alloc] initWithFrame:(CGRectMake(0, 39, kScreenWidth, 1))];
+        lineView.backgroundColor = color_lineColor;
+        [_listView addSubview:lineView];
+    }
+    return _listView;
+}
+
+- (UITableView *)tableView {
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:(CGRectMake(0, 40, kScreenWidth, 250 - 40)) style:(UITableViewStylePlain)];
+        _tableView.backgroundColor = [UIColor whiteColor];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        [_tableView registerClass:[YXHomeMapCell class] forCellReuseIdentifier:@"YXHomeMapCell"];
+    }
+    return _tableView;
+}
+
+- (MAMapView *)mapView {
+    if (!_mapView) {
+        _mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, self.view.frame.size.height - 250)];
+        _mapView.delegate = self;
+        _mapView.showsUserLocation = YES;    //YES 为打开定位，NO为关闭定位
+        _mapView.userTrackingMode = MAUserTrackingModeFollow;
+
+        [_mapView setZoomLevel:12 animated:YES];
+
+        
+        [_mapView setUserTrackingMode: MAUserTrackingModeFollow animated:YES]; //地图跟着位置移动
+        
+        //自定义定位经度圈样式
+        _mapView.customizeUserLocationAccuracyCircleRepresentation = NO;
+        
+        //后台定位
+        _mapView.pausesLocationUpdatesAutomatically = NO;
+        
+//        _mapView.allowsBackgroundLocationUpdates = YES;//iOS9以上系统必须配置
+    }
+    return _mapView;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    [self requestDataMapFind];
+    [self loadSubviews];
+
+}
+
+#pragma mark - 添加大头针
+- (void)addMAPointAnnotation {
+
+    for (int i = 0; i < self.listArr.count; i ++) {
+        [self.mapView setRegion:MACoordinateRegionMakeWithDistance(CLLocationCoordinate2DMake(34.274222, 117.210043), 20000, 20000)];
+        MAPointAnnotation *pointAnnotation = [[MAPointAnnotation alloc] init];
+        pointAnnotation.coordinate = CLLocationCoordinate2DMake([self.gpsyArr[i] doubleValue],[self.gpsxArr[i] doubleValue]);
+        pointAnnotation.title = @"hhe"; //大头针
+        [self.mapView addAnnotation:pointAnnotation];
+        
+        
+        self.annotationView.titleLab.text = self.titleArr[i];
+        self.annotationView.addressLab.text = self.addressArr[i];
+        NSString *urlStr = self.urlArr[i];
+        [self.annotationView.pictureImage sd_setImageWithURL:[NSURL URLWithString:urlStr] placeholderImage:[UIImage imageNamed:@""]];
+
+    }
+    
+}
+
+
+- (MAAnnotationView *)mapView:(MAMapView *)mapView viewForAnnotation:(id<MAAnnotation>)annotation
+{
+    if ([annotation isKindOfClass:[MAPointAnnotation class]])
+    {
+        static NSString *customReuseIndetifier = @"customReuseIndetifier";
+        
+       self.annotationView = (YXCustomAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:customReuseIndetifier];
+        
+        if (self.annotationView == nil)
+        {
+            self.annotationView = [[YXCustomAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:customReuseIndetifier];
+            self.annotationView.canShowCallout = NO;
+            self.annotationView.draggable = YES;
+            self.annotationView.calloutOffset = CGPointMake(0, -5);
+        }
+        self.annotationView.image = [UIImage imageNamed:@"greendatouzhen_44x72_"];
+        
+        
+        // 点击气泡
+        [self.annotationView setSelectCalloutViewClick:^(CLLocationCoordinate2D coorinate){
+            
+        }];
+        return self.annotationView;
+    }
+    return nil;
+}
+
+- (void)mapView:(MAMapView *)mapView didSelectAnnotationView:(MAAnnotationView *)view {
+
+    if ([view isKindOfClass:[YXCustomAnnotationView class]]) {
+//        NSLog(@"%f",view.annotation.coordinate.latitude);
+    }
+}
+
+#pragma mark - 请求地图坐标
+- (void)requestDataMapFind {
+//    http://www.4008000114.com:8099/MallSell/Inventory/MapFind.ashx?PageNo=1&PageSize=20&distance=10&gpsx=117.158110&gpsy=34.277422
+    NSString *urlStr = @"MallSell/Inventory/MapFind.ashx";
+    NSDictionary *parameter = @{@"PageNo":@"1",@"PageSize":@"20",@"distance":@"10",@"gpsx":@"117.158110",@"gpsy":@"34.277422"};
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:parameter success:^(id responseObject) {
+        if (SUCCESS) {
+            NSDictionary *dic = responseObject[@"DATA"];
+            self.queryLab.text = [NSString stringWithFormat:@"查询结果:%@",dic[@"TOTAL"]];
+            self.listArr = [YXMapModel mj_objectArrayWithKeyValuesArray:dic[@"LIST"]];
+            for (YXMapModel *model in self.listArr) {
+                [self.gpsxArr addObject:model.GPSX];
+                [self.gpsyArr addObject:model.GPSY];
+                [self.titleArr addObject:model.TITLE];
+                [self.addressArr addObject:model.ADDRESSNAME];
+                [self.urlArr addObject:model.IMAGEURL];
+            }
+            [self addMAPointAnnotation];
+    
+            
+        }else {
+            
+        }
+        [self.tableView reloadData];
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+- (void)loadSubviews {
+    [self.view addSubview:self.mapView];
+    [self.view addSubview:self.listView];
+    [self.mapView addSubview:self.locationBtn];
+    [self.listView addSubview:self.queryLab];
+    [self.listView addSubview:self.tableView];
+
+}
+
+#pragma mark - UITableView Delegate
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.listArr.count;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    YXHomeMapCell *cell = [tableView dequeueReusableCellWithIdentifier:@"YXHomeMapCell" forIndexPath:indexPath];
+    cell.model = self.listArr[indexPath.row];
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 70;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    YXMapModel *model = self.listArr[indexPath.row];
+    NSLog(@"%@ --- %@",model.GPSX,model.GPSY);
+
+}
+
+@end

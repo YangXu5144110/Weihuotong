@@ -1,0 +1,13 @@
+//
+//  YXChatViewController.h
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/27.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "EaseMessageViewController.h"
+
+@interface YXChatViewController : EaseMessageViewController
+
+@end

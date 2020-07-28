@@ -1,0 +1,74 @@
+//
+//  YXScreeningButton.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/23.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXScreeningButton.h"
+
+@interface YXScreeningButton ()
+
+@property (nonatomic ,strong) UIImageView *imageShang;
+@property (nonatomic ,strong) UIImageView *imageXia;
+@property (nonatomic ,strong) UIImageView *imageRight;
+@end
+
+@implementation YXScreeningButton
+
+- (UIImageView *)imageShang {
+    if (!_imageShang) {
+        _imageShang = [UIImageView new];
+       _imageShang.transform = CGAffineTransformMakeRotation(-M_PI);
+    }
+    return _imageShang;
+}
+
+- (UIImageView *)imageXia {
+    if (!_imageXia) {
+        _imageXia = [UIImageView new];
+    }
+    return _imageXia;
+}
+
+- (UIImageView *)imageRight {
+    if (!_imageRight) {
+        _imageRight = [UIImageView new];
+    }
+    return _imageRight;
+}
+
+- (void)setShang:(NSString *)shang {
+    _shang = shang;
+    _imageShang.image = [UIImage imageNamed:_shang];
+}
+
+- (void)setXia:(NSString *)xia {
+    _xia = xia;
+    _imageXia.image = [UIImage imageNamed:_xia];
+}
+
+- (void)setXia_L:(NSString *)xia_L {
+    _xia_L = xia_L;
+    _imageRight.image = [UIImage imageNamed:_xia_L];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        [self addSubview:self.imageShang];
+        [self addSubview:self.imageXia];
+        [self addSubview:self.imageRight];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.imageShang.frame = CGRectMake(self.titleLabel.W + self.titleLabel.X + 2, 8, 6, 6);
+    self.imageXia.frame = CGRectMake(self.titleLabel.W + self.titleLabel.X + 2, 16, 6, 6);
+    self.imageRight.frame = CGRectMake(self.titleLabel.W + self.titleLabel.X +2 , (self.H - 15)/ 2, 15, 15);
+}
+
+
+@end

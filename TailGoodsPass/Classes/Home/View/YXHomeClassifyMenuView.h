@@ -1,0 +1,16 @@
+//
+//  HomeClassifyMenuView.h
+//  SameWorld
+//
+//  Created by 杨旭 on 2017/3/31.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface YXHomeClassifyMenuView : UIView
+
+@property (nonatomic ,copy) void (^buttonClicked)(NSInteger index);
+- (instancetype)initWithFrame:(CGRect)frame  withTitle:(NSArray *)title withImage:(NSArray *)image;
+
+@end

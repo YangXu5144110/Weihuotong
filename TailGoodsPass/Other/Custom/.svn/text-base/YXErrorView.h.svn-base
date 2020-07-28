@@ -1,0 +1,18 @@
+//
+//  YXErrorView.h
+//  MushroomRider
+//
+//  Created by 李小朋 on 2017/7/5.
+//  Copyright © 2017年 Yang Xu. All rights reserved.
+//
+
+#import "BaseView.h"
+
+@interface YXErrorView : BaseView
+
+- (instancetype)initWithFrame:(CGRect)frame ImageName:(NSString *)imageName Title:(NSString *)title;
+- (instancetype)initWithFrame:(CGRect)frame ImageName:(NSString *)imageName Title:(NSString *)title Refresh:(BOOL)refresh;
+
+@property (nonatomic ,copy)void(^refreshClickBlock)();
+
+@end

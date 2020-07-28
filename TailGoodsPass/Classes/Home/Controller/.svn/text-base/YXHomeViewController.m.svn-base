@@ -1,0 +1,412 @@
+//
+//  HomeViewController.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/2.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXHomeViewController.h"
+#import "YXHomeTableView.h"
+#import "SDCycleScrollView.h"
+#import "YXHomeClassifyMenuView.h"
+#import "YXBalanceModel.h"
+#import "YXHomeTypeViewController.h"
+#import "YXWebViewController.h"
+#import "YXHomeDetailsViewController.h"
+#import <CoreLocation/CoreLocation.h>
+#import "YXCityListViewController.h"
+#import "YXSearchViewController.h"
+#import "YXHomeMapViewController.h"
+#import "YXHomeReleaseViewController.h"
+@interface YXHomeViewController ()<CLLocationManagerDelegate,SDCycleScrollViewDelegate,UISearchBarDelegate>
+
+// 定位管理对象
+@property (nonatomic, strong) CLLocationManager *manager;
+// 地理编码和反编码对象
+@property (nonatomic, strong) CLGeocoder *geocoder;
+
+
+@property (nonatomic ,strong) UIView *headerView;
+@property (nonatomic ,strong) SDCycleScrollView *cycleScrollView;
+@property (nonatomic ,strong) YXHomeClassifyMenuView *menuView;
+@property (nonatomic ,strong) YXHomeTableView *tableView;
+@property (nonatomic ,strong) YXBalanceModel *balanceModel;
+
+@property (nonatomic ,strong) UIButton *cityBtn;
+@property (nonatomic ,strong) UIButton *searchBan;
+@property (nonatomic ,strong) UIButton *messageBtn;
+
+// 数据源
+@property (nonatomic ,strong) NSMutableArray *dataSource;
+
+@end
+
+@implementation YXHomeViewController
+
+- (CLGeocoder *)geocoder{
+    if (!_geocoder) {
+        self.geocoder = [[CLGeocoder alloc] init];
+    }
+    return _geocoder;
+}
+
+- (NSMutableArray *)dataSource {
+    if (!_dataSource) {
+        _dataSource = [NSMutableArray array];
+    }
+    return _dataSource;
+}
+
+- (UIView *)headerView {
+    if (!_headerView) {
+        _headerView = [[UIView alloc] initWithFrame:(CGRectMake(0, 0, kScreenWidth,310))];
+        _headerView.backgroundColor = color_backColor;
+    }
+    return _headerView;
+}
+
+- (SDCycleScrollView *)cycleScrollView {
+    if (!_cycleScrollView) {
+        _cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:(CGRectMake(0, 0, kScreenWidth, 150)) delegate:self placeholderImage:[UIImage imageNamed:@""]];
+    }
+    return _cycleScrollView;
+}
+
+
+- (YXHomeClassifyMenuView *)menuView {
+    if (!_menuView) {
+        NSArray *titleArr= @[@"最后疯抢",@"在线批发",@"零售卖场",@"一键发布",@"货源信息",@"求购信息",@"商家",@"地图找货"];
+        NSArray *imageArr = @[@"fengqiangBtn_33x33_",@"pifaBtn_33x33_",@"lingshouBtn_33x33_",@"yijianBtn_33x33_",@"huoyuanBtn_33x33_",@"qiugouBtn_33x33_",@"shangjiaBtn_33x33_",@"dituBtn_33x33_"];
+        _menuView = [[YXHomeClassifyMenuView alloc] initWithFrame:(CGRectMake(0, 150, kScreenWidth, 160)) withTitle:titleArr withImage:imageArr];
+        YXWeakSelf
+        [self.menuView setButtonClicked:^(NSInteger index){
+            
+            YXHomeTypeViewController *typeVC = [[YXHomeTypeViewController alloc] init];
+            typeVC.hidesBottomBarWhenPushed = YES;
+            
+            switch (index-1000) {
+                case 0: {
+                    typeVC.title = @"最后疯抢";
+                    typeVC.typeView = Home_SnapView;
+                    [weakSelf.navigationController pushViewController:typeVC animated:YES];
+                }
+                    break;
+                case 1: {
+                    typeVC.title = @"在线批发";
+                    typeVC.typeView = Home_PiFaView;
+                    [weakSelf.navigationController pushViewController:typeVC animated:YES];
+                }
+                    break;
+                case 2: {
+                    typeVC.title = @"零售卖场";
+                    typeVC.typeView = Home_LingShouView;
+                    [weakSelf.navigationController pushViewController:typeVC animated:YES];
+                }
+                    break;
+                case 3: {
+                    YXHomeReleaseViewController *releaseVC = [[YXHomeReleaseViewController alloc] init];
+                    releaseVC.title = @"一键发布货源";
+                    releaseVC.hidesBottomBarWhenPushed = YES;
+                    [weakSelf.navigationController pushViewController:releaseVC animated:YES];
+                }
+                    break;
+                case 4: {
+                    typeVC.title = @"货源信息";
+                    typeVC.typeView = Home_HuoYuanView;
+                    [weakSelf.navigationController pushViewController:typeVC animated:YES];
+                }
+                    break;
+                case 5: {
+                    typeVC.title = @"求购信息";
+                    typeVC.typeView = Home_QiuGouView;
+                    [weakSelf.navigationController pushViewController:typeVC animated:YES];
+                }
+                    break;
+                case 6: {
+                    typeVC.title = @"商家";
+                    typeVC.typeView = Home_ShopView;
+                    [weakSelf.navigationController pushViewController:typeVC animated:YES];
+                }
+                    break;
+                case 7: {
+                    YXHomeMapViewController *mapVC = [[YXHomeMapViewController alloc] init];
+                    mapVC.title = @"地图找货";
+                    mapVC.hidesBottomBarWhenPushed = YES;
+                    [weakSelf.navigationController pushViewController:mapVC animated:YES];
+                }
+                    break;
+                default:
+                    break;
+            }
+        }];
+    }
+    return _menuView;
+}
+
+- (YXHomeTableView *)tableView {
+    if (!_tableView ) {
+        _tableView = [[YXHomeTableView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - TabBarHeight - NarBarHeight) style:(UITableViewStylePlain)];
+        _tableView.tableHeaderView = self.headerView;
+        [self.headerView addSubview:self.cycleScrollView];
+        [self.headerView addSubview:self.menuView];
+        
+        
+        YXWeakSelf
+        [_tableView setDidSelectItemAtIndexPath:^(NSInteger section,NSInteger row,NSString *goodID){
+            NSLog(@"%ld -- %ld",section,row);
+            switch (section) {
+                case 0:{
+                    YXWebViewController *webVC = [[YXWebViewController alloc] init];
+                    webVC.hidesBottomBarWhenPushed = YES;
+                    [weakSelf.navigationController pushViewController:webVC animated:YES];
+                }
+                    break;
+                case 1:{
+                    YXHomeDetailsViewController *detailsVC = [[YXHomeDetailsViewController alloc] init];
+                    detailsVC.ProductNo = goodID;
+                    detailsVC.hidesBottomBarWhenPushed = YES;
+                    [weakSelf.navigationController pushViewController:detailsVC animated:YES];
+                }
+                    break;
+                case 2:{
+                    
+                }
+                    break;
+                case 3:{
+                    
+                }
+                    break;
+                default:
+                    break;
+            }
+        }];
+
+    }
+    return _tableView;
+}
+
+- (UIButton *)cityBtn {
+    if (!_cityBtn) {
+        _cityBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        [_cityBtn setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
+        [_cityBtn setTitle:@"全国" forState:(UIControlStateNormal)];
+        [_cityBtn setImage:[UIImage imageNamed:@"xiala_9x9_"] forState:(UIControlStateNormal)];
+        _cityBtn.frame = CGRectMake(0, 0, 50, 40);
+        _cityBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+        [_cityBtn setImgViewStyle:(ButtonImgViewStyleRight) imageSize:(CGSizeMake(9, 9)) space:5];
+        [self.cityBtn addTarget:self action:@selector(selectCityBtnClick:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _cityBtn;
+}
+
+
+- (void)selectCityBtnClick:(UIButton *)sender {
+    YXCityListViewController *cityVC = [[YXCityListViewController alloc] init];
+    cityVC.currentCity = self.cityBtn.titleLabel.text;
+    cityVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:cityVC animated:YES];
+    
+    [cityVC setSelectCityBlock:^(NSString *cityName){
+        [self.cityBtn setTitle:cityName forState:(UIControlStateNormal)];
+    }];
+    
+}
+
+- (UIButton *)searchBan {
+    if (!_searchBan) {
+        _searchBan = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _searchBan.frame = CGRectMake(0, 0, 300, 30);
+        _searchBan.backgroundColor = [UIColor whiteColor];
+        _searchBan.layer.masksToBounds = YES;
+        _searchBan.layer.cornerRadius = 5;
+        _searchBan.titleLabel.font = [UIFont systemFontOfSize:12];
+        [_searchBan setTitle:@"输入类别或关键字" forState:(UIControlStateNormal)];
+        [_searchBan setTitleColor:color_textTwo forState:(UIControlStateNormal)];
+        [_searchBan setImage:[UIImage imageNamed:@"search_crm_20x20_"] forState:(UIControlStateNormal)];
+        [_searchBan addTarget:self action:@selector(searchBanClick:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _searchBan;
+}
+- (void)searchBanClick:(UIButton *)sender {
+    
+    YXSearchViewController *searchVC = [[YXSearchViewController alloc] init];
+    searchVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:searchVC animated:YES];
+    
+}
+
+- (UIButton *)messageBtn {
+    if (!_messageBtn) {
+        _messageBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _messageBtn.frame = CGRectMake(0, 0, 40, 40);
+        [_messageBtn setImage:[UIImage imageNamed:@"pushMsg_n_23x23_"] forState:(UIControlStateNormal)];
+        [_messageBtn addTarget:self action:@selector(messageBtnClick:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _messageBtn;
+}
+
+- (void)messageBtnClick:(UIButton *)sender {
+
+    
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.edgesForExtendedLayout = 0;
+    
+    [self navBarUI];
+    [self locationAction];
+    [self requestDataHomeList];
+    [self.view addSubview:self.tableView];
+}
+
+
+
+#pragma mark - 请求首页列表接口
+- (void)requestDataHomeList {
+
+//    http://www.4008000114.com:8099/HomePage/Index.ashx
+    NSString *urlStr = @"HomePage/Index.ashx";
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:nil success:^(id responseObject) {
+//        NSLog(@"%@",responseObject);
+        if (SUCCESS) {
+            NSDictionary *data = [responseObject objectForKey:@"DATA"];
+            // 轮播图
+            NSMutableArray *imageArr = [NSMutableArray array];
+            NSArray *topArr = [data objectForKey:@"AD_TOP"];
+            for (NSDictionary *dic in topArr) {
+                YXBalanceModel *model = [[YXBalanceModel alloc] init];
+                [model setValuesForKeysWithDictionary:dic];
+                NSString *srcStr = [NSString stringWithFormat:@"%@",model.IMAGEURL];
+                [imageArr addObject:srcStr];
+                [self.dataSource addObject:model];
+            }
+            _cycleScrollView.imageURLStringsGroup = imageArr;
+            
+            self.tableView.dic = [NSMutableDictionary dictionaryWithDictionary:data];
+            
+        }else {
+            
+        }
+        
+        [self.tableView reloadData];
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+
+- (void)navBarUI {
+
+    UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithCustomView:self.cityBtn];
+    self.navigationItem.leftBarButtonItem = leftItem;
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithCustomView:self.messageBtn];
+    self.navigationItem.rightBarButtonItem = rightItem;
+    self.navigationItem.titleView = self.searchBan;
+    
+}
+
+
+
+#pragma mark -- 定位权限
+- (void)locationAction {
+    
+    //1.创建定位管理对象
+    self.manager = [[CLLocationManager alloc] init];
+    
+    self.manager.delegate = self;
+    
+    //2.判断手机设置中的定位服务和用户授权的状态
+    if ([CLLocationManager locationServicesEnabled]) {
+        
+        if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
+            [self.manager requestWhenInUseAuthorization];
+        }
+        //开始定位,(定位服务非常耗电,越精准越耗电)
+        self.manager.desiredAccuracy = kCLLocationAccuracyBest;  //最精准(状态自选)
+        //设置最小更新距离, 超过一百米后就重新定位(自己设定)
+        self.manager.distanceFilter = 100;
+        //开启定位
+        [self.manager startUpdatingLocation];
+    } else {
+        //跳转到设置界面
+        NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+    }
+    
+}
+
+#pragma mark - CLLocationManagerDelegate的代理方法 -
+// 1. 每次定位都会执行, 多次执行的方法
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations{
+    
+    // 最新的位置总是存放在第一位
+    CLLocation *location = locations.firstObject;
+    
+    NSLog(@"维度: %f, 经度: %f", location.coordinate.latitude, location.coordinate.longitude);
+    
+    // 真机方法
+    [self getAddressWithLatitude:location.coordinate.latitude withLongitude:location.coordinate.longitude];
+    
+    // 模拟器方法
+    [self getAddressWithLatitude:34.274222 withLongitude:117.210043];
+    
+}
+// 2. 定位失败的时候会执行的方法
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error{
+    // NSLog(@"定位失败");
+}
+#pragma mark - 地理反编码 -
+- (void)getAddressWithLatitude: (CLLocationDegrees )latitude withLongitude: (CLLocationDegrees )longitude{
+    // 反编码
+    // 通过经度封装一个location对象
+    CLLocation *location = [[CLLocation alloc] initWithLatitude:latitude longitude:longitude];
+    
+//     NSLog(@"%@", location);
+    
+    [self.geocoder reverseGeocodeLocation:location completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+        
+        
+        if (error || placemarks.count == 0) {
+            
+            [SVProgressHUD showErrorWithStatus:@"地址没找到，可能在月球上!"];
+
+        }else {
+            
+            CLPlacemark *placemark = [placemarks firstObject];
+            NSDictionary *dic = [placemark addressDictionary];
+            NSLog(@"dic %@",dic);//根据你的需要选取所需要的地址
+            
+            [self.cityBtn setTitle:dic[@"City"] forState:(UIControlStateNormal)];
+        }
+  
+        
+    }];
+    
+    [self.manager stopUpdatingLocation];
+
+    
+}
+
+
+
+#pragma mark - SDcycleScrollView
+/** 点击图片回调 */
+- (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index {
+    
+    self.balanceModel = [self.dataSource objectAtIndex:index];
+
+    YXWebViewController *webVC = [[YXWebViewController alloc] init];
+    webVC.url = [NSString stringWithFormat:@"%@",self.balanceModel.IMAGELINK];
+    webVC.title = self.balanceModel.TITLE;
+    webVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:webVC animated:YES];
+    
+    
+}
+
+
+
+@end

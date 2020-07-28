@@ -1,0 +1,157 @@
+//
+//  YXHomeDetailsBottomView.m
+//  TailGoodsPass
+//
+//  Created by 杨旭 on 2017/9/12.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXHomeDetailsBottomView.h"
+
+@interface YXHomeDetailsBottomView ()
+
+@property (nonatomic ,strong) UIButton *btn1;
+@property (nonatomic ,strong) UIButton *btn2;
+@property (nonatomic ,strong) UIButton *btn3;
+@property (nonatomic ,strong) UIButton *btn4;
+@property (nonatomic ,strong) UIButton *btn5;
+
+@end
+
+@implementation YXHomeDetailsBottomView
+
+- (UIButton *)btn1 {
+    if (!_btn1) {
+        _btn1 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        [_btn1 setTitle:@"客服" forState:(UIControlStateNormal)];
+        [_btn1 setTitleColor:color_textOne forState:(UIControlStateNormal)];
+        _btn1.titleLabel.font = [UIFont systemFontOfSize:12];
+        _btn1.layer.borderColor = color_backColor.CGColor;
+        _btn1.layer.borderWidth = 0.5;
+        [_btn1 setImage:[UIImage imageNamed:@"kefuliaotian_19x19_"] forState:(UIControlStateNormal)];
+        _btn1.tag = 800;
+        [_btn1 setImgViewStyle:(ButtonImgViewStyleTop) imageSize:(CGSizeMake(19, 19)) space:5];
+        [_btn1 addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _btn1;
+}
+
+- (UIButton *)btn2 {
+    if (!_btn2) {
+        _btn2 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        [_btn2 setTitle:@"店铺" forState:(UIControlStateNormal)];
+        [_btn2 setTitleColor:color_textOne forState:(UIControlStateNormal)];
+        _btn2.titleLabel.font = [UIFont systemFontOfSize:12];
+        _btn2.layer.borderColor = color_backColor.CGColor;
+        _btn2.layer.borderWidth = 0.5;
+        [_btn2 setImage:[UIImage imageNamed:@"shop_19x19_"] forState:(UIControlStateNormal)];
+        [_btn2 setImgViewStyle:(ButtonImgViewStyleTop) imageSize:(CGSizeMake(19, 19)) space:5];
+        _btn2.tag = 801;
+          [_btn2 addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _btn2;
+}
+- (UIButton *)btn3 {
+    if (!_btn3) {
+        _btn3 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        [_btn3 setTitle:@"收藏" forState:(UIControlStateNormal)];
+        [_btn3 setTitleColor:color_textOne forState:(UIControlStateNormal)];
+        _btn3.titleLabel.font = [UIFont systemFontOfSize:12];
+        _btn3.layer.borderColor = color_backColor.CGColor;
+        _btn3.layer.borderWidth = 0.5;
+        [_btn3 setImage:[UIImage imageNamed:@"shoucang_n_19x19_"] forState:(UIControlStateNormal)];
+        [_btn3 setImage:[UIImage imageNamed:@"shoucang_19x19_"] forState:(UIControlStateSelected)];
+        [_btn3 setImgViewStyle:(ButtonImgViewStyleTop) imageSize:(CGSizeMake(19, 19)) space:5];
+        _btn3.tag = 802;
+        [_btn3 addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+
+    }
+    return _btn3;
+}
+
+- (UIButton *)btn4 {
+    if (!_btn4) {
+        _btn4 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        [_btn4 setTitle:@"加入购物车" forState:(UIControlStateNormal)];
+        [_btn4 setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
+        _btn4.titleLabel.font = [UIFont systemFontOfSize:16];
+        _btn4.backgroundColor = [UIColor orangeColor];
+        _btn4.tag = 803;
+        [_btn4 addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _btn4;
+}
+
+- (UIButton *)btn5 {
+    if (!_btn5) {
+        _btn5 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        [_btn5 setTitle:@"立即购买" forState:(UIControlStateNormal)];
+        [_btn5 setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
+        _btn5.titleLabel.font = [UIFont systemFontOfSize:16];
+        _btn5.backgroundColor = [UIColor redColor];
+        _btn5.tag = 804;
+        [_btn5 addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+
+    }
+    return _btn5;
+}
+
+- (void)click:(UIButton *)sender {
+    self.selectBtnClick(sender.tag - 800);
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self addSubview:self.btn1];
+        [self addSubview:self.btn2];
+        [self addSubview:self.btn3];
+        [self addSubview:self.btn4];
+        [self addSubview:self.btn5];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    YXWeakSelf
+    [_btn1 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(weakSelf.mas_left).offset(0);
+        make.top.equalTo(weakSelf.mas_top).offset(0);
+        make.height.offset(50);
+        make.width.offset(40);
+    }];
+    
+    [_btn2 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_btn1.mas_right).offset(0);
+        make.top.equalTo(weakSelf.mas_top).offset(0);
+        make.height.offset(50);
+        make.width.offset(40);
+    }];
+    
+    [_btn3 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_btn2.mas_right).offset(0);
+        make.top.equalTo(weakSelf.mas_top).offset(0);
+        make.height.offset(50);
+        make.width.offset(40);
+    }];
+    
+    [_btn4 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_btn3.mas_right).offset(0);
+        make.top.equalTo(weakSelf.mas_top).offset(0);
+        make.height.offset(50);
+        make.width.offset((kScreenWidth - 120)/2);
+    }];
+    
+    [_btn5 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_btn4.mas_right).offset(0);
+        make.top.equalTo(weakSelf.mas_top).offset(0);
+        make.height.offset(50);
+        make.width.offset((kScreenWidth - 120)/2);
+    }];
+}
+
+@end

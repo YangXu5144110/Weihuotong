@@ -1,0 +1,66 @@
+//
+//  YXPiFaCollectionView.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/5.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXPiFaCollectionView.h"
+#import "YXPIFACellCell.h"
+#import "YXPiFaModel.h"
+@interface YXPiFaCollectionView ()<UICollectionViewDelegateFlowLayout,UICollectionViewDataSource>
+
+
+@end
+@implementation YXPiFaCollectionView
+
+- (void)setTitleStr:(NSString *)titleStr {
+    _titleStr = titleStr;
+}
+
+- (void)setDataArr:(NSMutableArray *)dataArr {
+    _dataArr = dataArr;
+    _dataArr = [YXPiFaModel mj_objectArrayWithKeyValuesArray:_dataArr];
+    
+    [self reloadData];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame collectionViewLayout:(UICollectionViewLayout *)layout {
+    if (self = [super initWithFrame:frame collectionViewLayout:layout]) {
+        self.dataSource = self;
+        self.delegate = self;
+        // 注册cell
+        [self registerNib:[UINib nibWithNibName:@"YXPIFACellCell" bundle:nil] forCellWithReuseIdentifier:@"YXPIFACellCell"];
+    }
+    return self;
+}
+
+#pragma mark - UICollectionView的数据源代理方法
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    
+    if ([self.titleStr isEqualToString:@"在线批发"]) {
+         return self.dataArr.count;
+    }else {
+        return self.dataArr.count;
+
+    }
+   
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+
+    YXPIFACellCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"YXPIFACellCell" forIndexPath:indexPath];
+    cell.model = self.dataArr[indexPath.row];
+    return cell;
+
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    
+    
+}
+
+@end

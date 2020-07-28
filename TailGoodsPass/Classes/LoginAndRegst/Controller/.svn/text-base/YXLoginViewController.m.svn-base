@@ -1,0 +1,210 @@
+//
+//  YXLoginAndRegstViewController.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/6.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXLoginViewController.h"
+
+@interface YXLoginViewController ()
+
+@property (nonatomic ,strong) UIImageView *logoImage;
+@property (nonatomic ,strong) UITextField *userNameTextField;
+@property (nonatomic ,strong) UITextField *passwordTextField;
+@property (nonatomic ,strong) UIButton *loginBtn;
+@property (nonatomic ,strong) UIButton *forgetPwdBtn;
+@property (nonatomic ,strong) UIButton *registBtn;
+@property (nonatomic ,strong) UIView *lineView;
+
+
+@end
+
+@implementation YXLoginViewController
+
+- (UIImageView *)logoImage {
+    if (!_logoImage) {
+        _logoImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo_60x60_"]];
+        _logoImage.frame = CGRectMake((kScreenWidth - 60) /2, 24, 60, 60);
+    }
+    return _logoImage;
+}
+
+- (UITextField *)userNameTextField {
+    if (!_userNameTextField) {
+        _userNameTextField= [[UITextField alloc] initWithFrame:(CGRectMake((kScreenWidth - (kScreenWidth - 100))/ 2, _logoImage.H + _logoImage.Y + 30, kScreenWidth - 100, 40))];
+        _userNameTextField.placeholder = @"请输入手机号/昵称";
+        _userNameTextField.layer.borderColor = color_globalColor.CGColor;
+        _userNameTextField.layer.borderWidth = 1.0f;
+        _userNameTextField.font = [UIFont fontWithName:@"Arial" size:14.0f];
+        _userNameTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        UIImageView *image=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"zhanghao_22x22_"]];
+        _userNameTextField.leftView=image;
+        _userNameTextField.leftViewMode = UITextFieldViewModeAlways;
+        _userNameTextField.layer.masksToBounds = YES;
+        _userNameTextField.layer.cornerRadius = 5;
+        
+        // 获取用户登录过的账号
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kPHONE]) {
+            _userNameTextField.text = [[NSUserDefaults standardUserDefaults] objectForKey:kPHONE];
+        } else {
+            _userNameTextField.text = @"";
+        }
+    }
+    return _userNameTextField;
+}
+
+- (UITextField *)passwordTextField {
+    if (!_passwordTextField) {
+        _passwordTextField = [[UITextField alloc] initWithFrame:(CGRectMake((kScreenWidth - (kScreenWidth - 100))/ 2, _userNameTextField.H +_userNameTextField.Y + 10, kScreenWidth - 100, 40))];
+        _passwordTextField.placeholder = @"请输入密码";
+        _passwordTextField.layer.borderColor = color_globalColor.CGColor;
+        _passwordTextField.layer.borderWidth = 1.0f;
+        _passwordTextField.font = [UIFont fontWithName:@"Arial" size:14.0f];
+        _passwordTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        UIImageView *image=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"mima_22x22_"]];
+        _passwordTextField.leftView=image;
+        _passwordTextField.leftViewMode = UITextFieldViewModeAlways;
+        _passwordTextField.layer.masksToBounds = YES;
+        _passwordTextField.layer.cornerRadius = 5;
+    }
+    return _passwordTextField;
+}
+
+- (UIButton *)loginBtn {
+    if (!_loginBtn) {
+        _loginBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _loginBtn.frame = CGRectMake((kScreenWidth - (kScreenWidth - 100))/ 2, _passwordTextField.H +_passwordTextField.Y + 10, kScreenWidth - 100, 40);
+        [_loginBtn setTitle:@"立即登录" forState:(UIControlStateNormal)];
+        [_loginBtn setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
+        _loginBtn.backgroundColor = color_globalColor;
+        _loginBtn.layer.masksToBounds = YES;
+        _loginBtn.layer.cornerRadius = 5;
+        _loginBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+        _loginBtn.tag = 2000;
+        [_loginBtn addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _loginBtn;
+}
+
+- (UIButton *)forgetPwdBtn {
+    if (!_forgetPwdBtn) {
+        _forgetPwdBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _forgetPwdBtn.frame = CGRectMake(CGRectGetMaxX(_lineView.frame) - 90, CGRectGetMaxY(_loginBtn.frame) + 10, 100, 10);
+        [_forgetPwdBtn setTitleColor:color_globalColor forState:(UIControlStateNormal)];
+        [_forgetPwdBtn setTitle:@"忘记密码？" forState:(UIControlStateNormal)];
+        _forgetPwdBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        _forgetPwdBtn.tag = 2001;
+
+    }
+    return _forgetPwdBtn;
+}
+
+- (UIButton *)registBtn {
+    if (!_registBtn) {
+        _registBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _registBtn.frame = CGRectMake(CGRectGetMinX(_lineView.frame) -10, CGRectGetMaxY(_loginBtn.frame) + 10, 100, 10);
+        [_registBtn setTitle:@"立即注册" forState:(UIControlStateNormal)];
+        [_registBtn setTitleColor:color_globalColor forState:(UIControlStateNormal)];
+        _registBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        _registBtn.tag = 2002;
+
+    }
+    return _registBtn;
+}
+
+- (UIView *)lineView {
+    if (!_lineView) {
+        _lineView = [[UIView alloc] initWithFrame:(CGRectMake((kScreenWidth - 1) / 2, _loginBtn.H + _loginBtn.Y + 10, 1, 10))];
+        _lineView.backgroundColor = color_globalColor;
+    }
+    return _lineView;
+}
+
+- (void)click:(UIButton *)sender {
+    
+    switch (sender.tag - 2000) {
+        case 0: {  // 登录
+            if (self.userNameTextField.text.length == 0 || self.passwordTextField.text.length == 0) {
+                [self showTostMessage:@"账号和密码不能为空！"];
+                
+            }else {
+                
+                [self requestDataLogIn];
+
+            }
+            
+        }
+            break;
+        case 1: {  // 忘记密码
+            
+        }
+            break;
+        case 2: {  // 立即注册
+                
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    self.title = @"登录";
+    
+    [self createUI];
+    
+}
+
+- (void)createUI {
+    [self.view addSubview:self.logoImage];
+    [self.view addSubview:self.userNameTextField];
+    [self.view addSubview:self.passwordTextField];
+    [self.view addSubview:self.loginBtn];
+    [self.view addSubview:self.lineView];
+    [self.view addSubview:self.forgetPwdBtn];
+    [self.view addSubview:self.registBtn];
+    
+}
+
+#pragma mark - 请求登录接口
+- (void)requestDataLogIn {
+    
+    [[NSUserDefaults standardUserDefaults] setObject:self.userNameTextField.text forKey:kPHONE];
+    
+    //    http://www.4008000114.com:8099/UserInfo/LogIn.ashx?PWD=123456&PhoneType=iOS&RegID=1517bfd3f7fd35dda7e&Userid=18616731923
+    NSString *urlStr = @"UserInfo/LogIn.ashx";
+    NSDictionary *parameter = @{@"PWD":self.passwordTextField.text,@"PhoneType":@"iOS",@"RegID":@"1517bfd3f7fd35dda7e",@"Userid":self.userNameTextField.text};
+    
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:parameter success:^(id responseObject) {
+        if (SUCCESS) {
+//            NSLog(@"%@",responseObject);
+
+            //每次登陆之前先清空沙盒中的用户信息
+            [BXUserInfoManager cleanUserInfo];
+            
+            NSDictionary *data = [responseObject objectForKey:@"DATA"];
+            YXUserInfoModel *model = [YXUserInfoModel mj_objectWithKeyValues:data];
+
+            // 保存用户登录信息
+            [BXUserInfoManager saveUserInfoWithModel:model];
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+
+        }else {
+            NSLog(@"%@",responseObject);
+            [self showTostMessage:responseObject[@"MESSAGE"]];
+
+        }
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
+    
+}
+
+
+
+@end

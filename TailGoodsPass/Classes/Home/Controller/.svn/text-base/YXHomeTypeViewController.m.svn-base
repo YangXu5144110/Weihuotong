@@ -1,0 +1,207 @@
+//
+//  YXHomeTypeViewController.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/5.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXHomeTypeViewController.h"
+#import "YXPIFACellCell.h"
+#import "YXPiFaModel.h"
+#import "YXPiFaCollectionView.h"
+#import "YXMerchantMessageCollectionView.h"
+
+@interface YXHomeTypeViewController ()
+
+@property (nonatomic ,strong) YXPiFaCollectionView *collectionView;
+
+@property (nonatomic ,strong) YXMerchantMessageCollectionView *MMcollectionView;
+
+@property (nonatomic ,strong) NSMutableArray *dataArr;
+@end
+
+@implementation YXHomeTypeViewController
+
+
+- (YXMerchantMessageCollectionView *)MMcollectionView {
+    if (!_MMcollectionView) {
+        UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+        _MMcollectionView = [[YXMerchantMessageCollectionView alloc] initWithFrame:(CGRectMake(0, 0, kScreenWidth, kScreenHeight - 64)) collectionViewLayout:layout];
+    }
+    return _MMcollectionView;
+
+}
+- (YXPiFaCollectionView *)collectionView {
+    if (!_collectionView) {
+        UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+        flowLayout.itemSize = CGSizeMake((kScreenWidth - 45)/2, 260);
+        flowLayout.sectionInset = UIEdgeInsetsMake(15, 15, 15, 15);
+        flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+        _collectionView = [[YXPiFaCollectionView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight - 64) collectionViewLayout:flowLayout];
+        _collectionView.backgroundColor = [UIColor py_colorWithHexString:@"#ffffff"];
+    }
+    return _collectionView;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    switch (self.typeView) {
+        case Home_SnapView:
+            
+            break;
+        case Home_PiFaView:
+            [self requestDataSelectProduct:@"PF"];
+            [self createHome_PiFaView];
+            break;
+        case Home_LingShouView:
+            [self requestDataSelectProduct:@"LS"];
+            [self createHome_PiFaView];
+            break;
+        case Home_ReleaseView:
+         
+            break;
+        case Home_HuoYuanView:
+            [self requestDataSelectInventory];
+            [self createHome_HuoYuanView];
+            break;
+        case Home_QiuGouView:
+            [self requestDataSelectBuy];
+            [self createHome_QiuGouView];
+            break;
+        case Home_ShopView:
+            [self requestDataSelectShop];
+            [self createHome_ShopView];
+            break;
+        case Home_MapView:
+            
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)createHome_PiFaView {
+
+    [self.view addSubview:self.collectionView];
+}
+
+- (void)createHome_HuoYuanView {
+    [self.view addSubview:self.MMcollectionView];
+}
+
+- (void)createHome_QiuGouView {
+    [self.view addSubview:self.MMcollectionView];
+
+}
+
+- (void)createHome_ShopView {
+    [self.view addSubview:self.MMcollectionView];
+
+}
+
+- (void)requestData {
+    
+    if ([self.title isEqualToString:@"最后疯抢"]) {
+        
+    }else if ([self.title isEqualToString:@"在线批发"]) {
+    
+    }else if ([self.title isEqualToString:@"零售卖场"]) {
+    
+    }else if ([self.title isEqualToString:@"一键发布"]) {
+    
+    }else if ([self.title isEqualToString:@"货源信息"]) {
+    
+    }else if ([self.title isEqualToString:@"求购信息"]) {
+    
+    }else if ([self.title isEqualToString:@"商家"]) {
+    
+    }else {
+        
+    }
+    
+}
+
+#pragma mark - 请求在批发和零售卖场
+- (void)requestDataSelectProduct:(NSString *)OperType {
+
+//    http://www.4008000114.com:8099/MallSell/Product/SelectProduct.ashx?OperType=PF&OrderBy=Default&PageNo=1
+    NSString *urlStr = @"MallSell/Product/SelectProduct.ashx";
+    NSDictionary *parameter = @{@"OperType":OperType,@"OrderBy":@"Default",@"PageNo":@"1"};
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:parameter success:^(id responseObject) {
+        
+//        NSLog(@"%@",responseObject);
+        if (SUCCESS) {
+            self.collectionView.dataArr = [responseObject objectForKey:@"DATA"];
+        }else {
+        
+        }
+        
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+
+    }];
+    
+}
+
+
+
+#pragma mark - 请求货源信息
+- (void)requestDataSelectInventory {
+    
+//    http://www.4008000114.com:8099/MallSell/Inventory/SelectInventory.ashx?OrderBy=Default&PageNo=1
+    NSString *urlStr = @"MallSell/Inventory/SelectInventory.ashx";
+    NSDictionary *parameter = @{@"OrderBy":@"Default",@"PageNo":@"1"};
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:parameter success:^(id responseObject) {
+        if (SUCCESS) {
+            self.MMcollectionView.titleStr = self.title;
+            self.MMcollectionView.dataArr = [responseObject objectForKey:@"DATA"];
+        }else {
+        
+        }
+        [self.MMcollectionView reloadData];
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+#pragma mark - 请求求购信息
+- (void)requestDataSelectBuy {
+//    http://www.4008000114.com:8099/MallBuy/SelectBuy.ashx?OrderBy=Default&PageNo=1
+    NSString *urlStr = @"MallBuy/SelectBuy.ashx";
+    NSDictionary *parameter = @{@"OrderBy":@"Default",@"PageNo":@"1"};
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:parameter success:^(id responseObject) {
+//        NSLog(@"%@",responseObject);
+        if (SUCCESS) {
+            self.MMcollectionView.titleStr = self.title;
+            self.MMcollectionView.dataArr = [responseObject objectForKey:@"DATA"];
+        }else {
+            
+        }
+        [self.MMcollectionView reloadData];
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+#pragma mark - 请求商家 
+- (void)requestDataSelectShop  {
+//    http://www.4008000114.com:8099/MallShop/SelectShop.ashx?OrderBy=Default&PageNo=1
+    NSString *urlStr = @"MallShop/SelectShop.ashx";
+    NSDictionary *parameter = @{@"OrderBy":@"Default",@"PageNo":@"1"};
+    [BX_NetWorkManager requestForPOSTWithUrl:urlStr parameter:parameter success:^(id responseObject) {
+        if (SUCCESS) {
+            self.MMcollectionView.titleStr = self.title;
+            self.MMcollectionView.dataArr = [responseObject objectForKey:@"DATA"];
+        }else {
+            
+        }
+        [self.MMcollectionView reloadData];
+    } failure:^(NSError *error) {
+        
+    }];
+}
+
+
+@end

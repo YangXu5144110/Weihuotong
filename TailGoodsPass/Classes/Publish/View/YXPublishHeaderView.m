@@ -1,0 +1,112 @@
+//
+//  YXPublishHeaderView.m
+//  TailGoodsPass
+//
+//  Created by 杨旭 on 2017/9/25.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXPublishHeaderView.h"
+#import "UIColor+RandomColor.h"
+@interface YXPublishHeaderView ()
+@property (nonatomic ,strong) NSArray *titleArr;
+@property (nonatomic ,strong) NSArray *imageArr;
+@property (nonatomic ,strong) NSArray *subTitleArr;
+@property (nonatomic ,strong) UIButton *openShopBtn;
+@end
+
+@implementation YXPublishHeaderView
+
+- (NSArray *)titleArr {
+    if (!_titleArr) {
+        _titleArr = @[@"发布批发",@"发布零售",@"发布货源",@"发布求购"];
+    }
+    return _titleArr;
+}
+
+- (NSArray *)subTitleArr {
+    if (!_subTitleArr) {
+        _subTitleArr = @[@"您的产品将在线批发",@"您的产品将在线零售",@"仅供买家线下与您联系",@"仅供卖家线下与您联系"];
+    }
+    return _subTitleArr;
+}
+
+- (NSArray *)imageArr {
+    if (!_imageArr) {
+        _imageArr = @[@"pubpifa_29x29_",@"publingshou_29x29_",@"pubinvenory_29x29_",@"pubqiugou_29x29_"];
+    }
+    return _imageArr;
+}
+
+- (UIButton *)openShopBtn {
+    if (!_openShopBtn) {
+        _openShopBtn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        [_openShopBtn setTitle:@"我要开店" forState:(UIControlStateNormal)];
+        [_openShopBtn setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
+        [_openShopBtn setBackgroundColor:color_blue];
+        _openShopBtn.layer.masksToBounds = YES;
+        _openShopBtn.layer.cornerRadius = 3;
+        _openShopBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        _openShopBtn.tag = 3004;
+        [_openShopBtn addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+    }
+    return _openShopBtn;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self setup];
+    
+    }
+    return self;
+}
+
+- (void)setup {
+    
+    UIView *backView = [[UIView alloc] initWithFrame:(CGRectMake(0, 0, kScreenWidth, 125))];
+    backView.backgroundColor = color_backColor;
+    [self addSubview:backView];
+    
+    for (int i = 0; i < self.titleArr.count; i ++ ) {
+        UIButton *btn = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        btn.frame = CGRectMake((kScreenWidth / 4) * i , 0, kScreenWidth / 4, 120);
+        [btn setTitle:self.titleArr[i] forState:(UIControlStateNormal)];
+        [btn setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+        btn.titleLabel.font = [UIFont systemFontOfSize:12];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@",self.imageArr[i]]] forState:(UIControlStateNormal)];
+        [btn setImgViewStyle:(ButtonImgViewStyleTop) imageSize:(CGSizeMake(30, 30)) space:5];
+        btn.backgroundColor = [UIColor whiteColor];
+        btn.tag = i + 3000;
+        [btn addTarget:self action:@selector(click:) forControlEvents:(UIControlEventTouchUpInside)];
+        [backView addSubview:btn];
+    }
+    
+    for (int i = 0; i < self.subTitleArr.count; i ++) {
+        UILabel *lab = [UILabel setLabelWithText:self.subTitleArr[i] fontSize:10 color:color_textTwo];
+        CGFloat labW = kScreenWidth / 4 - 40;
+        CGFloat labH = 24;
+        lab.frame = CGRectMake(self.frame.size.width/4*i + self.frame.size.width/4/2-30 , 90, labW, labH);
+        lab.textAlignment = NSTextAlignmentCenter;
+        lab.numberOfLines = 2;
+        [backView addSubview:lab];
+    }
+    
+    for (int i = 0; i < 4; i ++) {
+        if (i > 0 && self.frame.size.height > 16) {
+            UIView *line = [[UIView alloc] initWithFrame:(CGRectMake((kScreenWidth / 4 - 0.5) *i, 5, 1, 120))];
+            line.backgroundColor = color_backColor;
+            [backView addSubview:line];
+        }
+    }
+    
+    self.openShopBtn.frame = CGRectMake((kScreenWidth - 80) / 2, 140, 80, 20);
+    [self addSubview:self.openShopBtn];
+}
+
+- (void)click:(UIButton *)sender {
+    self.selectBtnClick(sender.tag - 3000);
+}
+
+@end

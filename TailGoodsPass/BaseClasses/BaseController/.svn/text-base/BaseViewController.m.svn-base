@@ -1,0 +1,285 @@
+//
+//  BasedViewController.m
+//  ShangPinJiaZu
+//
+//  Created by macbook on 16/10/26.
+//  Copyright © 2016年 yangzhihao. All rights reserved.
+//
+
+#import "BaseViewController.h"
+//#import "MBProgressHUD+Add.h"
+#import "CustomAlertActionView.h"
+#import "UIView+Toast.h"
+
+@interface BaseViewController ()
+
+@end
+
+@implementation BaseViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)])
+    {
+        [self setEdgesForExtendedLayout:UIRectEdgeNone];
+    }
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:0];
+    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
+    
+    [self.navigationController.navigationBar setTranslucent:NO];
+    [self.navigationController.navigationBar setBarTintColor:color_globalColor];
+    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor] ,NSForegroundColorAttributeName :[UIFont systemFontOfSize:18.0f]}];
+}
+
+
+-(void)showAlertWith:(NSString *)messge {
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:messge message:@"" preferredStyle:(UIAlertControllerStyleAlert)];
+    
+    UIAlertAction *alert = [UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    
+    [alertController addAction:alert];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
+    
+}
+
+-(void)showAlertWithTitle:(NSString *)title {
+    
+    CustomAlertActionView *alertView = [[CustomAlertActionView alloc] initWithViewType:(AlertTypeNotButton)];
+    alertView.title = title;
+    [alertView show];
+    
+}
+
+- (void)showTostMessage:(NSString *)tost{
+    [self.view makeToast:tost duration:1.5 position:@"center"];
+}
+
+- (YXLoadingView *)loadingView {
+    if (!_loadingView) {
+        _loadingView = [[YXLoadingView alloc] initWithFrame:self.view.bounds];
+    }
+    return _loadingView;
+}
+
+/** 请求数据 */
+- (void)requestData{
+    
+}
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    
+    if ([self isViewLoaded] == YES && self.view.window == nil) {
+        self.view = nil;
+    }
+    
+    
+    
+
+    
+}
+
+
+/** 左侧  右侧按钮带标题初始化方法 */
+- (void)createLeftBarButtonItemWithImage:(NSString *)leftImage andRightImage:(NSString *)rightImage {
+    
+    
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    leftBtn.frame = CGRectMake(0, 20, 25, 40);
+    [leftBtn setImage:[UIImage imageNamed:leftImage] forState:UIControlStateNormal];
+    [leftBtn addTarget:self action:@selector(leftBarBtnItemAction) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+    
+    
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn addTarget:self action:@selector(rightBarBtnItemAction) forControlEvents:UIControlEventTouchUpInside];
+    rightBtn.frame = CGRectMake(kScreenWidth - 40, 20, 30, 40);
+    [rightBtn setImage:[UIImage imageNamed:rightImage] forState:UIControlStateNormal];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
+    
+}
+/** 右侧按钮调用 */
+- (void)rightBarBtnItemAction {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+/** 左侧按钮调用 */
+- (void)leftBarBtnItemAction {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)createLeftBarButtonItemWithImage:(NSString *)leftImage {
+    
+    self.navigationController.navigationBar.barTintColor = [UIColor py_colorWithHexString:@"#FFD02E" alpha:1];
+    //设置文字样式
+    [self.navigationController.navigationBar setTitleTextAttributes:
+     @{
+       NSFontAttributeName:kFont(20.0),
+       NSForegroundColorAttributeName:[UIColor py_colorWithHexString:@"#5F3100"]
+       }
+     ];
+    
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    leftBtn.frame = CGRectMake(0, 20, 25, 40);
+    [leftBtn setImage:[UIImage imageNamed:leftImage] forState:UIControlStateNormal];
+    [leftBtn addTarget:self action:@selector(leftBarBtnItemAction) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+    
+    
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    rightBtn.selected = NO;
+    [rightBtn addTarget:self action:@selector(rightBarBtnItemAction:) forControlEvents:UIControlEventTouchUpInside];
+    rightBtn.frame = CGRectMake(kScreenWidth - 80, 20, 80, 40);
+    rightBtn.titleLabel.font = [UIFont systemFontOfSize:16];
+    rightBtn.contentMode = UIViewContentModeRight;
+    [rightBtn setTitle:self.rightTitle forState:UIControlStateNormal];
+    [rightBtn setTitleColor:[UIColor py_colorWithHexString:@"#5f3100"] forState:UIControlStateNormal];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
+    
+}
+
+/** 右侧按钮调用 */
+- (void)rightBarBtnItemAction:(UIButton*)sender {
+    
+}
+
+/**
+ ** lineView:       需要绘制成虚线的view
+ ** lineLength:     虚线的宽度
+ ** lineSpacing:    虚线的间距
+ ** lineColor:      虚线的颜色
+ **/
+- (void)drawDashLine:(UIView *)lineView lineLength:(int)lineLength lineSpacing:(int)lineSpacing lineColor:(UIColor *)lineColor {
+    
+    CAShapeLayer *shapeLayer = [CAShapeLayer layer];
+    
+    [shapeLayer setBounds:lineView.bounds];
+    [shapeLayer setPosition:CGPointMake(CGRectGetWidth(lineView.frame) / 2, CGRectGetHeight(lineView.frame))];
+    [shapeLayer setFillColor:[UIColor clearColor].CGColor];
+    //  设置虚线颜色为
+    [shapeLayer setStrokeColor:lineColor.CGColor];
+    //  设置虚线宽度
+    [shapeLayer setLineWidth:CGRectGetHeight(lineView.frame)];     [shapeLayer setLineJoin:kCALineJoinRound];
+    //  设置线宽，线间距
+    [shapeLayer setLineDashPattern:[NSArray arrayWithObjects:[NSNumber numberWithInt:lineLength], [NSNumber numberWithInt:lineSpacing], nil]];
+    //  设置路径
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathMoveToPoint(path, NULL, 0, 0);
+    CGPathAddLineToPoint(path, NULL, CGRectGetWidth(lineView.frame), 0);
+    [shapeLayer setPath:path];
+    CGPathRelease(path);
+    //  把绘制好的虚线添加上来
+    [lineView.layer addSublayer:shapeLayer];
+}
+
+#pragma mark -- 调取MD5加密
+- (NSString *)passwordToMD5:(NSString *)password{
+    const char *cStr = [password UTF8String];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5( cStr, (CC_LONG)strlen(cStr), digest ); // This is the md5 call
+    
+    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    
+    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++){
+        [output appendFormat:@"%02x", digest[i]];
+    }
+    output = [output uppercaseString].copy;
+    return output;
+}
+
+#pragma mark - 判断手机号
+- (NSString *)valiMobile:(NSString *)mobile{
+    if (mobile.length != 11){
+        return @"手机号长度只能是11位";
+    }else{
+        /**
+         * 移动号段正则表达式
+         */
+        NSString *CM_NUM = @"^((13[4-9])|(147)|(15[0-2,7-9])|(178)|(18[2-4,7-8]))\\d{8}|(1705)\\d{7}$";
+        /**
+         * 联通号段正则表达式
+         */
+        NSString *CU_NUM = @"^((13[0-2])|(145)|(15[5-6])|(176)|(18[5,6]))\\d{8}|(1709)\\d{7}$";
+        /**
+         * 电信号段正则表达式
+         */
+        NSString *CT_NUM = @"^((133)|(153)|(177)|(18[0,1,9]))\\d{8}$";
+        
+        NSPredicate *pred1 = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CM_NUM];
+        BOOL isMatch1 = [pred1 evaluateWithObject:mobile];
+        NSPredicate *pred2 = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CU_NUM];
+        BOOL isMatch2 = [pred2 evaluateWithObject:mobile];
+        NSPredicate *pred3 = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", CT_NUM];
+        BOOL isMatch3 = [pred3 evaluateWithObject:mobile];
+        
+        if (isMatch1 || isMatch2 || isMatch3) {
+            return nil;
+        }else{
+            return @"请输入正确的手机号码";
+        }
+    }
+    return nil;
+}
+
+- (UIView *)nothingDataSubviewsWithImage:(NSString *)image andTitle:(NSString *)title andBgColor:(NSString *)color {
+    
+    UIView *bgView = [[UIView alloc] initWithFrame:self.view.frame];
+    bgView.backgroundColor = kColor(color);
+    
+    
+    //收工状态
+    UIImageView *imageV = [[UIImageView alloc] initWithImage:[UIImage imageNamed:image]];
+    [bgView addSubview:imageV];
+    
+    
+    UILabel *textLab = [[UILabel alloc] init];
+    textLab.textColor = kColor(@"#333333");
+    textLab.font = kFont(14);
+    textLab.textAlignment = NSTextAlignmentCenter;
+    textLab.numberOfLines = 0;
+    textLab.text = title;
+    [bgView addSubview:textLab];
+    
+    
+    [imageV mas_makeConstraints:^(MASConstraintMaker *make) {
+       
+        make.centerX.mas_equalTo(bgView);
+        make.centerY.mas_equalTo(bgView).offset(-80);
+        make.width.offset(200);
+        
+    }];
+    
+    [textLab mas_makeConstraints:^(MASConstraintMaker *make) {
+       
+        make.left.right.mas_equalTo(imageV);
+        make.top.mas_equalTo(imageV.mas_bottom).offset(10);
+//        make.bottom.mas_equalTo(bgView.mas_bottom).offset(-30);
+        
+    }];
+    
+    return bgView;
+    
+}
+
+
+@end

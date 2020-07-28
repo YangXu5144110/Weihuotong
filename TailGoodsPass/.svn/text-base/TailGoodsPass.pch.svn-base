@@ -1,0 +1,47 @@
+//
+//  TailGoodsPass.pch
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/2.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+
+#ifdef __OBJC__
+
+//另，注意：必须引入这两个系统库。否则会报错。
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <Hyphenate/Hyphenate.h>
+#import "EaseUI.h"
+
+#define DEMO_CALL 1
+
+#ifndef TailGoodsPass_pch
+#define TailGoodsPass_pch
+
+#import "HeaderURL.h"
+#import "Define.h"
+#import <Masonry.h>
+#import <SVProgressHUD.h>
+#import <MJExtension.h>
+#import <MJRefresh.h>
+#import <UIImageView+WebCache.h>
+#import <UIButton+WebCache.h>
+#import "UIView+SDAutoLayout.h"
+#import "TTGlobalUICommon.h"
+#import "UIColor+PYExtension.h"
+#import "UIView+GetFrameProperty.h"
+#import "UILabel+Extension.h"
+#import "MFToast.h"
+#import "BX_NetWorkManager.h"
+#import "UIButton+Extension.h"
+#import "BXUserInfoManager.h"
+#import "YXUserInfoModel.h"
+#import "YXLoadingView.h"
+
+
+#endif /* TailGoodsPass_pch */
+
+
+#endif

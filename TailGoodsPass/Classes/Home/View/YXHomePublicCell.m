@@ -1,0 +1,692 @@
+//
+//  YXHomePublicCell.m
+//  TailGoodsPass
+//
+//  Created by 杨旭 on 2017/9/11.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXHomePublicCell.h"
+#import "YXHomeModel.h"
+@interface YXHomePublicCell ()
+@property (nonatomic ,strong) UIImageView *pictureImage;
+@end
+@implementation YXHomePublicCell
+
+- (UIImageView *)pictureImage {
+    if (!_pictureImage) {
+        _pictureImage = [UIImageView new];
+        _pictureImage.frame = CGRectMake(0, 0, kScreenWidth, 100);
+    }
+    return _pictureImage;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self.contentView addSubview:self.pictureImage];
+    }
+    return self;
+}
+
+
+- (void)setModel:(YXBalanceModel *)model {
+    _model = model;
+    
+    [_pictureImage sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",_model.IMAGEURL]] placeholderImage:[UIImage imageNamed:@""]];
+}
+
+@end
+
+
+@interface YXHomePublicCell1 ()
+
+@property (nonatomic ,strong) UIView *topView;
+@property (nonatomic ,strong) UIImageView *pictureImage;
+@property (nonatomic ,strong) UILabel *titleLab;
+@property (nonatomic ,strong) UILabel *subLab1;
+@property (nonatomic ,strong) UILabel *subLab2;
+@property (nonatomic ,strong) UILabel *numberLab;
+@property (nonatomic ,strong) UILabel *addressLab;
+@property (nonatomic ,strong) UILabel *priceLab;
+@end
+
+@implementation YXHomePublicCell1
+
+- (UIImageView *)pictureImage {
+    if (!_pictureImage) {
+        _pictureImage = [[UIImageView alloc] init];
+    }
+    return _pictureImage;
+}
+
+- (UILabel *)titleLab {
+    if (!_titleLab) {
+        _titleLab = [UILabel setLabelWithText:@"" fontSize:14 color:color_textOne];
+    }
+    return _titleLab;
+}
+
+-(UILabel *)subLab1 {
+    if (!_subLab1) {
+        _subLab1 = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _subLab1;
+}
+
+- (UILabel *)subLab2 {
+    if (!_subLab2) {
+        _subLab2 = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _subLab2;
+}
+
+- (UILabel *)numberLab{
+    if (!_numberLab) {
+        _numberLab = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _numberLab;
+}
+
+- (UILabel *)addressLab {
+    if (!_addressLab) {
+        _addressLab = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _addressLab;
+}
+
+- (UILabel *)priceLab {
+    if (!_priceLab) {
+        _priceLab = [UILabel setLabelWithText:@"" fontSize:14 color:[UIColor redColor]];
+    }
+    return _priceLab;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor whiteColor];
+        [self setup];
+    }
+    return self;
+}
+
+- (void)setup {
+    [self.contentView addSubview:self.pictureImage];
+    [self.contentView addSubview:self.titleLab];
+    [self.contentView addSubview:self.subLab1];
+    [self.contentView addSubview:self.subLab2];
+    [self.contentView addSubview:self.numberLab];
+    [self.contentView addSubview:self.addressLab];
+    [self.contentView addSubview:self.priceLab];
+    
+    UIView *contentView = self.contentView;
+    CGFloat margin = 5;
+    
+    _pictureImage.sd_layout
+    .leftSpaceToView(contentView,0)
+    .topSpaceToView(contentView, 0)
+    .widthIs(100)
+    .heightIs(100);
+    
+    _titleLab.sd_layout
+    .leftSpaceToView(_pictureImage, margin)
+    .topSpaceToView(contentView, margin)
+    .heightIs(32);
+    [_titleLab setSingleLineAutoResizeWithMaxWidth:200];
+    
+    _subLab1.sd_layout
+    .leftSpaceToView(_pictureImage, margin)
+    .topSpaceToView(_titleLab, margin)
+    .heightIs(12);
+    [_subLab1 setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _subLab2.sd_layout
+    .leftSpaceToView(_pictureImage, 150)
+    .centerYEqualToView(_subLab1)
+    .heightIs(12);
+    [_subLab2 setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _numberLab.sd_layout
+    .leftSpaceToView(_pictureImage, margin)
+    .topSpaceToView(_subLab1, margin)
+    .heightIs(12);
+    [_numberLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _priceLab.sd_layout
+    .leftSpaceToView(_pictureImage, 150)
+    .centerYEqualToView(_numberLab)
+    .heightIs(14);
+    [_priceLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _addressLab.sd_layout
+    .leftSpaceToView(_pictureImage, margin)
+    .topSpaceToView(_numberLab, margin)
+    .heightIs(12);
+    [_addressLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    
+    [contentView setupAutoHeightWithBottomView:_addressLab bottomMargin:margin];
+}
+
+- (void)setModel:(YXHuoYuanModel *)model {
+    _model = model;
+    [_pictureImage sd_setImageWithURL:[NSURL URLWithString:_model.FIRSTIMAGE] placeholderImage:[UIImage imageNamed:@""]];
+    _titleLab.text = _model.TITLE;
+    _subLab1.text = [NSString stringWithFormat:@"分类:%@",_model.INVENTORYTYPENAME];
+    _subLab2.text = _model.DEALMODENAME;
+    _numberLab.text = [NSString stringWithFormat:@"库存:%@",_model.NUMNAME];
+    _priceLab.text = _model.PRICENAME;
+    _addressLab.text = _model.ADDRESSNAME;
+}
+
+@end
+
+@interface YXHomePublicCell2 ()
+@property (nonatomic ,strong) UILabel *titleLab;
+@property (nonatomic ,strong) UILabel *negotiable;
+@property (nonatomic ,strong) UILabel *subLab;
+@property (nonatomic ,strong) UILabel *numberLab;
+@property (nonatomic ,strong) UILabel *timeLab;
+@property (nonatomic ,strong) UILabel *addressLab;
+
+@end
+
+@implementation YXHomePublicCell2
+
+- (UILabel *)titleLab {
+    if (!_titleLab) {
+        _titleLab = [UILabel setLabelWithText:@"" fontSize:12 color:color_titleColor];
+    }
+    return _titleLab;
+}
+
+- (UILabel *)negotiable {
+    if (!_negotiable) {
+        _negotiable = [UILabel setLabelWithText:@"" fontSize:16 color:[UIColor redColor]];
+    }
+    return _negotiable;
+}
+
+- (UILabel *)subLab {
+    if (!_subLab) {
+        _subLab = [UILabel setLabelWithText:@"" fontSize:12 color:[UIColor orangeColor]];
+    }
+    return _subLab;
+}
+
+- (UILabel *)numberLab {
+    if (!_numberLab) {
+        _numberLab = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _numberLab;
+}
+
+- (UILabel *)timeLab {
+    if (!_timeLab) {
+        _timeLab = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _timeLab;
+}
+
+- (UILabel *)addressLab {
+    if (!_addressLab) {
+        _addressLab = [UILabel setLabelWithText:@"" fontSize:12 color:[UIColor redColor]];
+    }
+    return _addressLab;
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor whiteColor];
+        [self setup];
+    }
+    return self;
+}
+
+- (void)setup {
+    
+    NSArray *views = @[self.titleLab,self.negotiable,self.subLab,self.numberLab,self.timeLab,self.addressLab];
+    [self.contentView sd_addSubviews:views];
+    
+    UIView *contentView = self.contentView;
+    CGFloat magin = 10;
+    
+    _titleLab.sd_layout
+    .leftSpaceToView(contentView, magin)
+    .topSpaceToView(contentView, 5)
+    .heightIs(12);
+    [_titleLab setSingleLineAutoResizeWithMaxWidth:200];
+    
+    _negotiable.sd_layout
+    .rightSpaceToView(contentView, magin)
+    .topSpaceToView(contentView, magin)
+    .heightIs(16);
+    [_negotiable setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _subLab.sd_layout
+    .leftSpaceToView(contentView, magin)
+    .topSpaceToView(_titleLab, 15)
+    .heightIs(12);
+    [_subLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _numberLab.sd_layout
+    .leftSpaceToView(_subLab, 100)
+    .centerYEqualToView(_subLab)
+    .heightIs(12);
+    [_numberLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _timeLab.sd_layout
+    .rightSpaceToView(contentView, magin)
+    .centerYEqualToView(_numberLab)
+    .heightIs(12);
+    [_timeLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _addressLab.sd_layout
+    .leftSpaceToView(contentView, magin)
+    .topSpaceToView(_subLab, magin)
+    .heightIs(12);
+    [_addressLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    [contentView setupAutoHeightWithBottomView:_addressLab bottomMargin:5];
+    
+}
+
+- (void)setModel:(YXBuyModel *)model {
+    _model = model;
+    
+    _titleLab.text = _model.TITLE;
+    _negotiable.text = _model.PRICENAME;
+    _subLab.text = _model.TRADEMODENAME;
+    _numberLab.text = _model.NUMNAME;
+    _timeLab.text = _model.LEFTDATENAME;
+    _addressLab.text = _model.ADDRESSNAME;
+}
+
+@end
+
+
+
+
+@interface YXHomePublicCell3 ()
+
+@property (nonatomic ,strong) UIView *topView;
+@property (nonatomic ,strong) UIImageView *iconImage;
+@property (nonatomic ,strong) UILabel *titleLabel;
+@property (nonatomic ,strong) UIImageView *starImage;
+@property (nonatomic ,strong) UILabel *productNumberLab;
+@property (nonatomic ,strong) UILabel *salesLab;
+@property (nonatomic ,strong) UIButton *intoShopBtn;
+@property (nonatomic ,strong) UIView *lineView;
+
+@end
+
+@implementation YXHomePublicCell3
+
+- (UIView *)topView {
+    if (!_topView) {
+        _topView = [UIView new];
+        _topView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickStoreView)];
+        [_topView addGestureRecognizer:tap];
+    }
+    return _topView;
+}
+
+- (UIImageView *)iconImage {
+    if (!_iconImage) {
+        _iconImage = [UIImageView new];
+    }
+    return _iconImage;
+}
+- (UILabel *)titleLabel {
+    if (!_titleLabel) {
+        _titleLabel = [UILabel setLabelWithText:@"" fontSize:14 color:color_titleColor];
+    }
+    return _titleLabel;
+}
+
+- (UIImageView *)starImage {
+    if (!_starImage ) {
+        _starImage = [UIImageView new];
+    }
+    return _starImage;
+}
+
+-(UILabel *)productNumberLab {
+    if (!_productNumberLab) {
+        _productNumberLab = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _productNumberLab;
+}
+
+- (UILabel *)salesLab {
+    if (!_salesLab) {
+        _salesLab = [UILabel setLabelWithText:@"" fontSize:12 color:color_textTwo];
+    }
+    return _salesLab;
+}
+
+- (UIButton *)intoShopBtn {
+    if (!_intoShopBtn) {
+        _intoShopBtn = [UIButton buttonWithType:(UIButtonTypeRoundedRect)];
+        [_intoShopBtn setTitle:@"进店逛逛" forState:(UIControlStateNormal)];
+        [_intoShopBtn setTitleColor:color_blue forState:(UIControlStateNormal)];
+        _intoShopBtn.layer.borderColor = color_blue.CGColor;
+        _intoShopBtn.layer.borderWidth = 1;
+        _intoShopBtn.layer.cornerRadius = 5;
+        _intoShopBtn.layer.masksToBounds = YES;
+        _intoShopBtn.titleLabel.font = [UIFont systemFontOfSize:14];
+    }
+    return _intoShopBtn;
+}
+
+- (UIView *)lineView {
+    if (!_lineView) {
+        _lineView = [[UIView alloc] init];
+        _lineView.backgroundColor = color_lineColor;
+    }
+    return _lineView;
+}
+
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor whiteColor];
+        [self setup];
+    }
+    return self;
+}
+
+- (void)setup {
+    
+    NSArray *topViews = @[self.topView];
+    [self.contentView sd_addSubviews:topViews];
+    _topView.sd_layout
+    .leftEqualToView(self.contentView)
+    .topEqualToView(self.contentView)
+    .rightEqualToView(self.contentView)
+    .heightIs(55);
+    
+    
+    NSArray *views = @[self.iconImage,self.titleLabel,self.starImage,self.productNumberLab,self.salesLab,self.intoShopBtn,self.lineView];
+    [self.topView sd_addSubviews:views];
+    
+    
+    UIView *contentView = self.topView;
+    CGFloat margin = 5;
+    
+    _iconImage.sd_layout
+    .leftSpaceToView(contentView, 2)
+    .topSpaceToView(contentView, 2)
+    .heightIs(50)
+    .widthIs(50);
+    
+    _titleLabel.sd_layout
+    .leftSpaceToView(_iconImage, margin)
+    .topSpaceToView(contentView, 2)
+    .heightIs(14);
+    [_titleLabel setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _starImage.sd_layout
+    .leftSpaceToView(_iconImage, margin)
+    .topSpaceToView(_titleLabel, 0)
+    .heightIs(14)
+    .widthIs(100);
+    
+    _productNumberLab.sd_layout
+    .leftSpaceToView(_iconImage, margin)
+    .topSpaceToView(_starImage, 0)
+    .heightIs(12);
+    [_productNumberLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _salesLab.sd_layout
+    .leftSpaceToView(_productNumberLab, 50)
+    .centerYEqualToView(_productNumberLab)
+    .heightIs(12);
+    [_salesLab setSingleLineAutoResizeWithMaxWidth:100];
+    
+    _intoShopBtn.sd_layout
+    .rightSpaceToView(contentView, 5)
+    .centerYEqualToView(_iconImage)
+    .heightIs(20)
+    .widthIs(80);
+    
+    _lineView.sd_layout
+    .leftSpaceToView(contentView, 0)
+    .topSpaceToView(_iconImage, 2)
+    .heightIs(1)
+    .widthIs(kScreenWidth);
+
+}
+
+- (void)setIndexPath:(NSIndexPath *)indexPath {
+    _indexPath = indexPath;
+}
+
+- (void)setModel:(YXShopModel *)model {
+    _model = model;
+    
+    [_iconImage sd_setImageWithURL:[NSURL URLWithString:_model.LOGONAME] placeholderImage:[UIImage imageNamed:@""]];
+    
+    _titleLabel.text = _model.SHOPNAME;
+    
+    _productNumberLab.text = _model.PRODUCTNUMNAME;
+    _salesLab.text = _model.SALENUMNAME;
+    
+    
+    if (_model.DETAIL.count > 0) {
+        for (int i = 0; i < _model.DETAIL.count; i ++) {
+            YXShopDetailModel *detailModel = [_model.DETAIL objectAtIndex:i];
+            UIImageView *imageView = [UIImageView new];
+            imageView.frame = CGRectMake(kScreenWidth/4 * i, 57, kScreenWidth/4, 80);
+            [imageView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",detailModel.FIRSTIMAGE]]];
+            [self.contentView addSubview:imageView];
+        }
+
+    }
+    
+}
+
+- (void)clickStoreView {
+    if (self.clickSotreBtnBlock) {
+        self.clickSotreBtnBlock(_indexPath);
+    }
+    
+}
+
+
+@end
+
+@interface YXHomePublicCell4 ()
+
+@property (nonatomic ,strong) UILabel *titleLab;
+@property (nonatomic ,strong) UIButton *btn1;
+@property (nonatomic ,strong) UIButton *btn2;
+@property (nonatomic ,strong) UIButton *btn3;
+@property (nonatomic ,strong) UIButton *btn4;
+
+@end
+
+@implementation YXHomePublicCell4
+
+- (UILabel *)titleLab {
+    if (!_titleLab) {
+        _titleLab  = [UILabel setLabelWithText:@"商品评价" fontSize:14 color:[UIColor blackColor]];
+    }
+    return _titleLab;
+}
+
+- (UIButton *)btn1 {
+    if (!_btn1) {
+        _btn1 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _btn1.backgroundColor = [UIColor py_colorWithHexString:@"F8DCDB"];
+        _btn1.layer.masksToBounds = YES;
+        _btn1.layer.cornerRadius = 5;
+        _btn1.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+        [_btn1 setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+    }
+    return _btn1;
+}
+
+- (UIButton *)btn2 {
+    if (!_btn2) {
+        _btn2 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _btn2.backgroundColor = [UIColor py_colorWithHexString:@"F8DCDB"];
+        _btn2.layer.masksToBounds = YES;
+        _btn2.layer.cornerRadius = 5;
+        _btn2.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+        [_btn2 setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+
+    }
+    return _btn2;
+}
+
+- (UIButton *)btn3 {
+    if (!_btn3) {
+        _btn3 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _btn3.backgroundColor = [UIColor py_colorWithHexString:@"F8DCDB"];
+        _btn3.layer.masksToBounds = YES;
+        _btn3.layer.cornerRadius = 5;
+        _btn3.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+        [_btn3 setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+
+    }
+    return _btn3;
+}
+
+- (UIButton *)btn4 {
+    if (!_btn4) {
+        _btn4 = [UIButton buttonWithType:(UIButtonTypeCustom)];
+        _btn4.backgroundColor = [UIColor py_colorWithHexString:@"F8DCDB"];
+        _btn4.layer.masksToBounds = YES;
+        _btn4.layer.cornerRadius = 5;
+        _btn4.titleLabel.font = [UIFont boldSystemFontOfSize:14];
+        [_btn4 setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+
+    }
+    return _btn4;
+}
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        [self.contentView addSubview:self.titleLab];
+        [self.contentView addSubview:self.btn1];
+        [self.contentView addSubview:self.btn2];
+        [self.contentView addSubview:self.btn3];
+        [self.contentView addSubview:self.btn4];
+    }
+    return  self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    YXWeakSelf
+    [_titleLab mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(weakSelf.mas_left).offset(15);
+        make.top.equalTo(weakSelf.mas_top).offset(5);
+        make.width.offset(100);
+        make.height.offset(12);
+    }];
+    
+    [_btn1 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(weakSelf.mas_left).offset(15);
+        make.top.equalTo(_titleLab.mas_bottom).offset(15);
+        make.width.offset((kScreenWidth / 3) - 2*15);
+        make.height.offset(30);
+    }];
+    
+    [_btn2 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_btn1.mas_right).offset(15*2);
+        make.top.equalTo(_titleLab.mas_bottom).offset(15);
+        make.width.offset((kScreenWidth / 3) - 2*15);
+        make.height.offset(30);
+    }];
+    
+    [_btn3 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(weakSelf.mas_left).offset(15);
+        make.top.equalTo(_btn1.mas_bottom).offset(15);
+        make.width.offset((kScreenWidth / 3) - 2*15);
+        make.height.offset(30);
+    }];
+    
+    [_btn4 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_btn3.mas_right).offset(15*2);
+        make.top.equalTo(_btn2.mas_bottom).offset(15);
+        make.width.offset((kScreenWidth / 3) - 2*15);
+        make.height.offset(30);
+    }];
+}
+
+- (void)setDataArr:(NSArray *)dataArr {
+    _dataArr = dataArr;
+    
+    [_btn1 setTitle:_dataArr[0][@"NOTE"] forState:(UIControlStateNormal)];
+    [_btn2 setTitle:_dataArr[1][@"NOTE"] forState:(UIControlStateNormal)];
+    [_btn3 setTitle:_dataArr[2][@"NOTE"] forState:(UIControlStateNormal)];
+    [_btn4 setTitle:_dataArr[3][@"NOTE"] forState:(UIControlStateNormal)];
+
+}
+
+@end
+
+
+@interface YXHomePublicCell5 ()
+
+
+@end
+@implementation YXHomePublicCell5
+
+- (UILabel *)titleLab {
+    if (!_titleLab) {
+        _titleLab = [UILabel setLabelWithText:@"" fontSize:14 color:[UIColor blackColor]];
+    }
+    return _titleLab;
+}
+- (UILabel *)contentLab {
+    if (!_contentLab) {
+        _contentLab = [UILabel setLabelWithText:@"" fontSize:14 color:[UIColor blackColor]];
+    }
+    return _contentLab;
+}
+
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+        [self.contentView addSubview:self.titleLab];
+        [self.contentView addSubview:self.contentLab];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    YXWeakSelf
+    [_titleLab mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(weakSelf.mas_centerY);
+        make.left.equalTo(weakSelf.mas_left).offset(15);
+        make.width.offset(80);
+        [_titleLab sizeToFit];
+    }];
+    
+    [_contentLab mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(_titleLab.mas_centerY);
+        make.left.equalTo(_titleLab.mas_right).offset(50);
+        make.height.offset(16);
+        [_contentLab sizeToFit];
+    }];
+    
+    
+}
+
+@end
+
+

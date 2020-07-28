@@ -1,0 +1,34 @@
+# Uncomment this line to define a global platform for your project
+platform :ios, ‘9.0’
+inhibit_all_warnings!
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'TailGoodsPass' do
+# Uncomment this line if you're using Swift or would like to use dynamic frameworks
+# Pods for TailGoodsPass
+
+ pod 'Masonry'
+ pod 'SDWebImage'
+ pod 'SDCycleScrollView'
+
+ pod 'SVProgressHUD'
+ pod 'SDAutoLayout'
+ pod 'MJRefresh'
+ pod 'MJExtension'
+ pod 'AFNetworking'
+ 
+ #环信SDK
+ #Lite版本(不带实时音视频通话功能)
+ pod 'HyphenateLite', '~> 3.3.0'
+ #Full版本(带实时音视频通话功能)
+# pod 'Hyphenate' , '~> 3.3.0'
+ 
+ 
+ pod 'AMap3DMap-NO-IDFA' #3D地图 SDK
+ pod 'AMapSearch-NO-IDFA' #地图SDK搜索功能
+ pod 'AMapLocation-NO-IDFA' #定位SDK
+
+# use_frameworks!
+# pod 'ReactiveCocoa'
+end

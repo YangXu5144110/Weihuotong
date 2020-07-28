@@ -1,0 +1,104 @@
+//
+//  YXPublishWholesaleTableView.m
+//  TailGoodsPass
+//
+//  Created by 李小朋 on 2017/9/25.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXPublishWholesaleTableView.h"
+#import "YXPublishTypeCell.h"
+@interface YXPublishWholesaleTableView ()<UITableViewDelegate,UITableViewDataSource>
+
+@property (nonatomic ,strong) NSArray *titleArr;
+
+@end
+@implementation YXPublishWholesaleTableView
+
+- (NSArray *)titleArr {
+    if (!_titleArr) {
+        _titleArr = @[@"物流设置",@"退调货设置",@"码齐否",@"年龄段",@"库存年份",@"包装描述",@"瑕疵率",@"适合季节",@"信息有效期至",@"颜色",@"尺码"];
+    }
+    return _titleArr;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style {
+    if (self = [super initWithFrame:frame style:style]) {
+        self.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.dataSource = self;
+        self.delegate = self;
+        [self registerClass:[YXPublishTypeCell class] forCellReuseIdentifier:@"YXPublishTypeCell"];
+        [self registerClass:[YXPublishTypeCell1 class] forCellReuseIdentifier:@"YXPublishTypeCell1"];
+        [self registerClass:[YXPublishTypeCell2 class] forCellReuseIdentifier:@"YXPublishTypeCell2"];
+    }
+    return self;
+}
+
+#pragma mark - UITableView Delegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 3;
+}
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    switch (section) {
+        case 0:
+            return 5;
+            break;
+        case 1:
+            return self.titleArr.count + 1;
+            break;
+        case 2:
+            return 0;
+            break;
+        default:
+            break;
+    }
+    return 0;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            YXPublishTypeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"YXPublishTypeCell" forIndexPath:indexPath];
+            cell.titleLab.text = @"商品类别";
+            cell.contentLab.text = @"必选";
+            return cell;
+        }else if (indexPath.row == 1) {
+            YXPublishTypeCell1 *cell = [tableView dequeueReusableCellWithIdentifier:@"YXPublishTypeCell1" forIndexPath:indexPath];
+            cell.titleLab.text = @"标题";
+            cell.contentTF.placeholder = @"必填，6-30字，不得包含联系信息";
+            return cell;
+        }else if (indexPath.row == 2) {
+            
+        }else if (indexPath.row == 3) {
+            YXPublishTypeCell2 *cell = [tableView dequeueReusableCellWithIdentifier:@"YXPublishTypeCell2" forIndexPath:indexPath];
+            cell.titleLab.text = @"库存数量";
+            cell.contentTF.placeholder = @"必填";
+            cell.unitLab.text = @"单位";
+            cell.unitContentLab.text = @"必选";
+            return cell;
+        }
+    }else if (indexPath.section == 1) {
+        if (indexPath.row == 0) {
+            YXPublishTypeCell1 *cell = [tableView dequeueReusableCellWithIdentifier:@"YXPublishTypeCell1" forIndexPath:indexPath];
+            cell.titleLab.text = @"单位重量(千克)";
+            cell.contentTF.placeholder = @"必填，需如实描述，最多两位小数";
+            return cell;
+
+        }else{
+            YXPublishTypeCell *cell = [tableView dequeueReusableCellWithIdentifier:@"YXPublishTypeCell" forIndexPath:indexPath];
+            cell.titleLab.text = self.titleArr[indexPath.row -1];
+            cell.contentLab.text = @"必选";
+            return cell;
+        }
+    }else {
+    
+    
+    }
+    
+    return [[UITableViewCell alloc] init];
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 30;
+}
+
+@end

@@ -1,0 +1,43 @@
+//
+//  YXMeButton.m
+//  TailGoodsPass
+//
+//  Created by 杨旭 on 2017/9/6.
+//  Copyright © 2017年 杨旭. All rights reserved.
+//
+
+#import "YXMeButton.h"
+
+@implementation YXMeButton
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.titleLabel.textAlignment = NSTextAlignmentCenter;
+        self.titleLabel.font = [UIFont systemFontOfSize:15];
+        [self setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        self.backgroundColor = [UIColor whiteColor];
+        
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    self.imageView.Y = self.H * 0.2;
+    self.imageView.H = self.H * 0.3 ;
+    self.imageView.W = self.H * 0.3 ;
+    self.imageView.centerX = self.W * 0.5;
+    
+    self.titleLabel.X = 0;
+    self.titleLabel.Y = self.imageView.bottom;
+    self.titleLabel.W = self.W;
+    self.titleLabel.H = self.H - self.titleLabel.Y;
+    
+
+    
+}
+
+@end
