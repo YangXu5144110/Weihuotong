@@ -69,8 +69,8 @@
     
     [self requestDataShoppingCart];
     [self setNarBarUI];
-    [self.view addSubview:self.tableView];
     [self.view addSubview:self.sltView];
+    [self.view addSubview:self.tableView];
 
   
 }
